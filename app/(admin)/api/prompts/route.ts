@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '../../../../lib/db';
+import { db } from '@/lib/db';
 import { customPrompt } from '@/lib/db/schema';
 import { z } from 'zod';
 import { desc } from 'drizzle-orm';
@@ -12,9 +12,10 @@ const promptSchema = z.object({
 
 export async function GET() {
   try {
-    const prompts = await db.query.customPrompt.findMany({
-      orderBy: [desc(customPrompt.createdAt)],
-    });
+    const prompts = await db
+      .select()
+      .from(customPrompt)
+      .orderBy(desc(customPrompt.createdAt));
     return NextResponse.json(prompts);
   } catch (error) {
     console.error('Error fetching prompts:', error);

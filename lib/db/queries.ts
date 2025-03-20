@@ -2,9 +2,6 @@ import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { and, asc, desc, eq, gt, gte, inArray } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-
 import {
   user,
   chat,
@@ -15,25 +12,22 @@ import {
   message,
   vote,
   type DBMessage,
+  customPrompt,
+  type CustomPrompt,
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
-import { db } from '@/lib/db';
-import { customPrompt } from '@/lib/db/schema';
+import { db } from './index';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-// biome-ignore lint: Forbidden non-null assertion.
-const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client);
-
 export async function getUser(email: string): Promise<Array<User>> {
   try {
     return await db.select().from(user).where(eq(user.email, email));
   } catch (error) {
-    console.error('Failed to get user from database');
-    throw error;
+    console.error('Error fetching user:', error);
+    return [];
   }
 }
 
@@ -352,9 +346,15 @@ export async function updateChatVisiblityById({
   }
 }
 
-export async function getActiveCustomPrompts() {
-  return db.query.customPrompt.findMany({
-    where: eq(customPrompt.isActive, true),
-    orderBy: (prompts, { desc }) => [desc(prompts.createdAt)],
-  });
+export async function getActiveCustomPrompts(): Promise<Array<CustomPrompt>> {
+  try {
+    return await db
+      .select()
+      .from(customPrompt)
+      .where(eq(customPrompt.isActive, true))
+      .orderBy(desc(customPrompt.createdAt));
+  } catch (error) {
+    console.error('Error fetching active prompts:', error);
+    return [];
+  }
 }

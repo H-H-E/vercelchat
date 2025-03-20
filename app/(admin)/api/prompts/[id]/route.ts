@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '../../../../../lib/db';
+import { db } from '@/lib/db';
 import { customPrompt } from '@/lib/db/schema';
 import { z } from 'zod';
 import { eq } from 'drizzle-orm';
@@ -15,18 +15,20 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const prompt = await db.query.customPrompt.findFirst({
-      where: eq(customPrompt.id, params.id),
-    });
+    const prompt = await db
+      .select()
+      .from(customPrompt)
+      .where(eq(customPrompt.id, params.id))
+      .limit(1);
 
-    if (!prompt) {
+    if (!prompt[0]) {
       return NextResponse.json(
         { error: 'Prompt not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(prompt);
+    return NextResponse.json(prompt[0]);
   } catch (error) {
     console.error('Error fetching prompt:', error);
     return NextResponse.json(

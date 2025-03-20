@@ -57,6 +57,13 @@
       "when": 1742503097459,
       "tag": "0007_simple_ulik",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1742503581402,
+      "tag": "0008_soft_ken_ellis",
+      "breakpoints": true
     }
   ]
 }

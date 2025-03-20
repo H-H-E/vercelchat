@@ -17,6 +17,8 @@ import {
   type DBMessage,
 } from './schema';
 import { ArtifactKind } from '@/components/artifact';
+import { db } from '@/lib/db';
+import { customPrompt } from '@/lib/db/schema';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -348,4 +350,11 @@ export async function updateChatVisiblityById({
     console.error('Failed to update chat visibility in database');
     throw error;
   }
+}
+
+export async function getActiveCustomPrompts() {
+  return db.query.customPrompt.findMany({
+    where: eq(customPrompt.isActive, true),
+    orderBy: (prompts, { desc }) => [desc(prompts.createdAt)],
+  });
 }

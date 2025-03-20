@@ -150,3 +150,24 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const adminUser = pgTable('AdminUser', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  email: varchar('email', { length: 64 }).notNull().unique(),
+  passwordHash: text('passwordHash').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  lastLoginAt: timestamp('lastLoginAt'),
+});
+
+export type AdminUser = InferSelectModel<typeof adminUser>;
+
+export const customPrompt = pgTable('custom_prompt', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  content: text('content').notNull(),
+  isActive: boolean('is_active').notNull().default(true),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export type CustomPrompt = InferSelectModel<typeof customPrompt>;

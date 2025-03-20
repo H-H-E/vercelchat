@@ -1,7 +1,8 @@
 {
-  "name": "ai-chatbot",
+  "name": "poiesis-pete",
   "version": "0.1.0",
   "private": true,
+  "description": "Poiesis Pete - An AI-powered educational chatbot for Poiesis Education's afterschool programs",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "tsx lib/db/migrate && next build",
